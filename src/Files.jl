@@ -59,15 +59,27 @@ The function reads a file containing node capacity information and returns a dic
 ### Returns
 - a dictionary of node capacities. The key is the node id, and the value is a tuple of the maximum in-degree and out-degree of a node.
 """
-function readnodecapacityfile(filepath::String; comment::Char='#', 
-    delim::Char=',')::Dict{Int64, Tuple{Int64, Int64}}
+function readnodecapacityfile(filepath::String; comment::Char='#', delim::Char=',')::Dict{Int64, Tuple{Int64, Int64}} 
 
-    # initialize
+    #initialize
     capacities = Dict{Int64,Tuple{Int64,Int64}}()
     
     # TODO: implement this function
-    throw("The readnodecapacityfile function is not implemented yet.");
-
-    # return -
+    open(filepath, "r") do file # open a stream to the file
+        for line in eachline(file)
+          if startswith(line, comment) 
+                continue
+            end
+            parts = split(line, delim) # split the line around the delim
+         if (length(parts) >= 3) # check if we have the right number of fields
+            node_id = parse(Int64, parts[1])  # First field is the node id
+                max_in_degree = parse(Int64, parts[2])  # Second field is the max in-degree
+                max_out_degree = parse(Int64, parts[3])  # Third field is the max out-degree
+                capacities[node_id] = (max_in_degree, max_out_degree) # add the node capacity to the dictionary
+           end
+        end
+    end
+ 
+    #return -
     return capacities;
 end
